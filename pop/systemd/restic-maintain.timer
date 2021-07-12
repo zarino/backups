@@ -1,0 +1,9 @@
+[Unit]
+Description=Restic maintenance
+
+[Timer]
+OnUnitActiveSec=5m
+OnBootSec=5m
+
+[Install]
+WantedBy=timers.target

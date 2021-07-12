@@ -1,0 +1,9 @@
+[Unit]
+Description=Restic backup
+
+[Service]
+Type=oneshot
+ExecStart=/home/zarino/backups/pop/backup.sh
+SuccessExitStatus=1 2
+StandardOutput=journal
+StandardError=journal
