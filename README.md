@@ -65,3 +65,7 @@ To read the log for a systemd unit:
 
     journalctl --user -u restic-backup.service -f
     journalctl --user -u restic-maintain.service -f
+
+To check the state of the restic repo:
+
+    pop/restic.sh snapshots

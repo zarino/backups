@@ -2,12 +2,13 @@
 
 set -e -o allexport
 
+SCRIPT_DIR=$(dirname "$0")
 HOME="/home/zarino"
 PID_FILE="$HOME/.restic_maintain.pid"
 TIMESTAMP_FILE="$HOME/.restic_maintain_timestamp"
 INTERVAL="2 days" # in a format suitable for passing to `date -d` (GNU date)
 
-. "$HOME/backups/pop/env.conf"
+. "$SCRIPT_DIR/env.conf"
 
 if [ -f "$PID_FILE" ]; then
   if ps -p $(cat $PID_FILE) > /dev/null; then

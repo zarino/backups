@@ -2,14 +2,15 @@
 
 set -e -o allexport
 
+SCRIPT_DIR=$(dirname "$0")
 HOME="/home/zarino"
 PID_FILE="$HOME/.restic_backup.pid"
 TIMESTAMP_FILE="$HOME/.restic_backup_timestamp"
-INCLUDE_FILE="$HOME/backups/pop/include.conf"
-EXCLUDE_FILE="$HOME/backups/pop/exclude.conf"
+INCLUDE_FILE="$SCRIPT_DIR/include.conf"
+EXCLUDE_FILE="$SCRIPT_DIR/exclude.conf"
 INTERVAL="6 hours" # in a format suitable for passing to `date -d` (GNU date)
 
-. "$HOME/backups/pop/env.conf"
+. "$SCRIPT_DIR/env.conf"
 
 if [ -f "$PID_FILE" ]; then
   if ps -p $(cat $PID_FILE) > /dev/null; then
