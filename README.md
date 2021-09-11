@@ -29,10 +29,10 @@ If the remote restic repo at `$RESTIC_REPOSITORY` hasn’t been created yet, you
 Install the systemd units and timers:
 
     mkdir -p /home/zarino/.config/systemd/user
-    ln -s {/home/zarino/pop/systemd,/home/zarino/.config/systemd/user}/restic-backup.service
-    ln -s {/home/zarino/pop/systemd,/home/zarino/.config/systemd/user}/restic-backup.timer
-    ln -s {/home/zarino/pop/systemd,/home/zarino/.config/systemd/user}/restic-maintain.service
-    ln -s {/home/zarino/pop/systemd,/home/zarino/.config/systemd/user}/restic-maintain.timer
+    ln -s {/home/zarino/backups/pop/systemd,/home/zarino/.config/systemd/user}/restic-backup.service
+    ln -s {/home/zarino/backups/pop/systemd,/home/zarino/.config/systemd/user}/restic-backup.timer
+    ln -s {/home/zarino/backups/pop/systemd,/home/zarino/.config/systemd/user}/restic-maintain.service
+    ln -s {/home/zarino/backups/pop/systemd,/home/zarino/.config/systemd/user}/restic-maintain.timer
 
 Enable the systemd timers:
 
