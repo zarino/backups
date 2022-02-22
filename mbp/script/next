@@ -1,0 +1,45 @@
+#!/bin/sh
+
+set -e -o allexport
+
+SCRIPT_DIR=$(dirname "$0")
+CACHE_DIR="$SCRIPT_DIR/../cache"
+
+BACKUP_PID_FILE="$CACHE_DIR/backup.pid"
+MAINTAIN_PID_FILE="$CACHE_DIR/maintain.pid"
+
+BACKUP_TIMESTAMP_FILE="$CACHE_DIR/next_backup.timestamp"
+MAINTAIN_TIMESTAMP_FILE="$CACHE_DIR/next_maintain.timestamp"
+
+NOW_DATE=$(date)
+NOW_TIMESTAMP=$(date +"%s")
+
+if [ -f "$BACKUP_TIMESTAMP_FILE" ]; then
+    NEXT_BACKUP_TIMESTAMP=$(cat "$BACKUP_TIMESTAMP_FILE")
+    NEXT_BACKUP_DATE=$(date -j -f "%s" "$NEXT_BACKUP_TIMESTAMP")
+
+    if [ -f "$BACKUP_PID_FILE" ] && ps -p $(cat $BACKUP_PID_FILE) > /dev/null; then
+        NEXT_BACKUP_DATE="$NEXT_BACKUP_DATE (in progress)"
+    elif [ "$NOW_TIMESTAMP" -gt "$NEXT_BACKUP_TIMESTAMP" ]; then
+        NEXT_BACKUP_DATE="$NEXT_BACKUP_DATE (overdue)"
+    fi
+else
+    NEXT_BACKUP_DATE="(unknown)"
+fi
+
+if [ -f "$MAINTAIN_TIMESTAMP_FILE" ]; then
+    NEXT_MAINTAIN_TIMESTAMP=$(cat "$MAINTAIN_TIMESTAMP_FILE")
+    NEXT_MAINTAIN_DATE=$(date -j -f "%s" "$NEXT_MAINTAIN_TIMESTAMP")
+
+    if [ -f "$MAINTAIN_PID_FILE" ] && ps -p $(cat $MAINTAIN_PID_FILE) > /dev/null; then
+        NEXT_MAINTAIN_DATE="$NEXT_MAINTAIN_DATE (in progress)"
+    elif [ "$NOW_TIMESTAMP" -gt "$NEXT_MAINTAIN_TIMESTAMP" ]; then
+        NEXT_MAINTAIN_DATE="$NEXT_MAINTAIN_DATE (overdue)"
+    fi
+else
+    NEXT_MAINTAIN_DATE="(unknown)"
+fi
+
+echo "Time now:      $NOW_DATE"
+echo "Next backup:   $NEXT_BACKUP_DATE"
+echo "Next maintain: $NEXT_MAINTAIN_DATE"

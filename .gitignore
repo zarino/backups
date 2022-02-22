@@ -1,1 +1,5 @@
 env.conf
+mbp/bin
+mbp/cache
+mbp/launchd
+mbp/logs

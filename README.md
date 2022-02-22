@@ -2,6 +2,82 @@
 
 Automated restic backups, to Backblaze B2, from my Mac and Pop_OS PC.
 
+## macOS
+
+### Installing
+
+Install restic 0.9.2 or higher: (0.9.2 supports non-master Backblaze keys.)
+
+    brew install restic
+    restic version
+
+Check out this repo somewhere (eg: `/Users/zarinozappia/backups`) and then go into the `mbp` directory:
+
+    cd /Users/zarinozappia
+    git clone https://github.com/zarino/backups.git
+    cd backups/mbp
+
+Copy `example-env.conf` and fill in the required variables:
+
+    cp example-env.conf env.conf
+    nano env.conf
+
+Since the backup script doesn’t have access to your default shell environment, it won’t know where to find the `restic` command. This is why the `env.conf` file contains a `RESTIC_BINARY` setting. You’ll want to set this to the output of `which restic` in your default shell.
+
+Run the `init` script to create the remote restic repository:
+
+    script/init
+
+(If this works, you’ll see a message like `created restic repository [blah] at [blah]`. If it fails with `Fatal: create repository at [blah] failed: config already exists` don’t panic – that just means the remote repository has already been created, you’ll all set!)
+
+Compile the launchd launch agent and backup-wrapper binary, using `make`:
+
+    make
+
+Grant Full Disk Access permissions to the `bin/backup-wrapper` binary, via `System Preferences > Security & Privacy > Privacy > Full Disk Access`.
+
+Install and load the compiled launch agent:
+
+    make install-launch-agent
+
+Your first backup will begin immediately (and will take a very, very long time).
+
+### Updating
+
+    cd <whatever>/backups/mbp
+    git pull
+    make
+    make install-launch-agent
+
+If the `bin/backup-wrapper` binary has been updated, you will need to re-grant it Full Disk Access permissions, via `System Preferences > Security & Privacy > Privacy > Full Disk Access`.
+
+### Checking on status
+
+The launch agent directs script output and errors to files in `~/Library/Logs/uk.co.zarino.backups/`. A copy of all script output is _also_ saved into a new file per day, in the `mbp/logs` directory.
+
+The process ID of current backups/maintenances, and the timestamp after which the next backup/maintenance will be performed, are stored in the `mbp/cache` directory. Removing the timestamp files from this directory will force a backup/maintenance to run the next time the launch agent runs.
+
+You can see when a backup/maintenance will next happen with the `script/next` shortcut:
+
+    mbp/script/next
+
+You can see information about the launch agent with the hilariously user-unfriendly command:
+
+    launchctl print gui/$(id -u)/uk.co.zarino.backups
+
+To check the state of the restic repo, use the restic wrapper script, eg:
+
+    mbp/script/restic snapshots
+    mbp/script/restic stats
+
+### Manually starting a backup
+
+Backup and maintenance runs at most every 300 seconds, as long as the computer is connected to a power source.
+
+If you want to run it manually, you can:
+
+    launchctl kickstart gui/$(id -u)/uk.co.zarino.backups
+
 ## Pop_OS
 
 ### Installing
