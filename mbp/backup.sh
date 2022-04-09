@@ -14,6 +14,7 @@ LOG_FILE="$LOG_DIR/$LOG_DATE-backup.log"
 INCLUDE_FILE="$SCRIPT_DIR/include.conf"
 EXCLUDE_FILE="$SCRIPT_DIR/exclude.conf"
 INTERVAL="+6H" # in a format suitable for passing to `date -v` (BSD date)
+RATE_LIMIT_FLAGS=""
 
 . "$SCRIPT_DIR/env.conf"
 
@@ -50,10 +51,17 @@ if [ $(pmset -g ps | head -1 | grep -c "Battery") -gt 0 ]; then
   exit 4
 fi
 
+if [ -n "$RESTIC_UPLOAD_LIMIT" ]; then
+    RATE_LIMIT_FLAGS="$RATE_LIMIT_FLAGS --limit-upload $RESTIC_UPLOAD_LIMIT"
+fi
+if [ -n "$RESTIC_DOWNLOAD_LIMIT" ]; then
+    RATE_LIMIT_FLAGS="$RATE_LIMIT_FLAGS --limit-download $RESTIC_DOWNLOAD_LIMIT"
+fi
+
 echo $$ > "$PID_FILE"
 log "Backup start"
 
-"${RESTIC_BINARY:-restic}" backup --verbose -o b2.connections=20 --files-from "$INCLUDE_FILE" --exclude-file "$EXCLUDE_FILE" | tee -a "$LOG_FILE"
+"${RESTIC_BINARY:-restic}" backup --verbose -o b2.connections=20 --files-from "$INCLUDE_FILE" --exclude-file "$EXCLUDE_FILE" $RATE_LIMIT_FLAGS | tee -a "$LOG_FILE"
 
 log "Backup finished"
 echo $(date -v "$INTERVAL" +"%s") > $TIMESTAMP_FILE

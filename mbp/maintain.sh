@@ -12,6 +12,7 @@ TIMESTAMP_FILE="$CACHE_DIR/next_maintain.timestamp"
 LOG_DATE=$(date +"%Y-%m-%d")
 LOG_FILE="$LOG_DIR/$LOG_DATE-maintain.log"
 INTERVAL="+48H" # in a format suitable for passing to `date -v` (BSD date)
+RATE_LIMIT_FLAGS=""
 
 . "$SCRIPT_DIR/env.conf"
 
@@ -48,10 +49,17 @@ if [ $(pmset -g ps | head -1 | grep -c "Battery") -gt 0 ]; then
   exit 4
 fi
 
+if [ -n "$RESTIC_UPLOAD_LIMIT" ]; then
+    RATE_LIMIT_FLAGS="$RATE_LIMIT_FLAGS --limit-upload $RESTIC_UPLOAD_LIMIT"
+fi
+if [ -n "$RESTIC_DOWNLOAD_LIMIT" ]; then
+    RATE_LIMIT_FLAGS="$RATE_LIMIT_FLAGS --limit-download $RESTIC_DOWNLOAD_LIMIT"
+fi
+
 echo $$ > "$PID_FILE"
 log "Maintenance start"
 
-"${RESTIC_BINARY:-restic}" forget --verbose --keep-last 10 --keep-daily 7 --keep-weekly 5 --keep-monthly 12 --keep-yearly 3 --prune | tee -a "$LOG_FILE"
+"${RESTIC_BINARY:-restic}" forget --verbose --keep-last 10 --keep-daily 7 --keep-weekly 5 --keep-monthly 12 --keep-yearly 3 --prune $RATE_LIMIT_FLAGS | tee -a "$LOG_FILE"
 
 log "Maintenance finished"
 echo $(date -v "$INTERVAL" +"%s") > $TIMESTAMP_FILE
