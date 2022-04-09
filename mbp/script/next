@@ -24,7 +24,11 @@ if [ -f "$BACKUP_TIMESTAMP_FILE" ]; then
         NEXT_BACKUP_DATE="$NEXT_BACKUP_DATE (overdue)"
     fi
 else
-    NEXT_BACKUP_DATE="(unknown)"
+    if [ -f "$BACKUP_PID_FILE" ] && ps -p $(cat $BACKUP_PID_FILE) > /dev/null; then
+        NEXT_BACKUP_DATE="(in progress)"
+    else
+        NEXT_BACKUP_DATE="(unknown)"
+    fi
 fi
 
 if [ -f "$MAINTAIN_TIMESTAMP_FILE" ]; then
@@ -37,7 +41,11 @@ if [ -f "$MAINTAIN_TIMESTAMP_FILE" ]; then
         NEXT_MAINTAIN_DATE="$NEXT_MAINTAIN_DATE (overdue)"
     fi
 else
-    NEXT_MAINTAIN_DATE="(unknown)"
+    if [ -f "$MAINTAIN_PID_FILE" ] && ps -p $(cat $MAINTAIN_PID_FILE) > /dev/null; then
+        NEXT_MAINTAIN_DATE="(in progress)"
+    else
+        NEXT_MAINTAIN_DATE="(unknown)"
+    fi
 fi
 
 echo "Time now:      $NOW_DATE"
