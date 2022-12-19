@@ -61,7 +61,7 @@ fi
 echo $$ > "$PID_FILE"
 log "Backup start"
 
-"${RESTIC_BINARY:-restic}" backup --verbose -o b2.connections=20 --files-from "$INCLUDE_FILE" --exclude-file "$EXCLUDE_FILE" $RATE_LIMIT_FLAGS | tee -a "$LOG_FILE"
+"${RESTIC_BINARY:-restic}" backup --verbose -o b2.connections=20 --host "$RESTIC_HOST" --files-from "$INCLUDE_FILE" --exclude-file "$EXCLUDE_FILE" $RATE_LIMIT_FLAGS | tee -a "$LOG_FILE"
 
 log "Backup finished"
 echo $(date -v "$INTERVAL" +"%s") > $TIMESTAMP_FILE

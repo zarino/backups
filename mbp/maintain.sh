@@ -59,7 +59,7 @@ fi
 echo $$ > "$PID_FILE"
 log "Maintenance start"
 
-"${RESTIC_BINARY:-restic}" forget --verbose --keep-last 10 --keep-daily 7 --keep-weekly 5 --keep-monthly 12 --keep-yearly 3 --prune $RATE_LIMIT_FLAGS | tee -a "$LOG_FILE"
+"${RESTIC_BINARY:-restic}" forget --verbose --host "$RESTIC_HOST" --keep-last 10 --keep-daily 7 --keep-weekly 5 --keep-monthly 12 --keep-yearly 3 --prune $RATE_LIMIT_FLAGS | tee -a "$LOG_FILE"
 
 log "Maintenance finished"
 echo $(date -v "$INTERVAL" +"%s") > $TIMESTAMP_FILE
