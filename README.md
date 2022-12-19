@@ -98,9 +98,9 @@ Copy `pop/example-env.conf` and fill in the required variables:
     cp pop/example-env.conf pop/env.conf
     nano pop/env.conf
 
-If the remote restic repo at `$RESTIC_REPOSITORY` hasn’t been created yet, you can run the `init.sh` script to create it: (This command will fail if the repo has already been initialised, which is fine.)
+If the remote restic repo at `$RESTIC_REPOSITORY` hasn’t been created yet, you can run the `init` script to create it: (This command will fail if the repo has already been initialised, which is fine.)
 
-    pop/init.sh
+    pop/script/init
 
 Install the systemd units and timers:
 
@@ -144,4 +144,4 @@ To read the log for a systemd unit:
 
 To check the state of the restic repo:
 
-    pop/restic.sh snapshots
+    pop/script/restic snapshots

@@ -4,6 +4,6 @@ set -e -o allexport
 
 SCRIPT_DIR=$(dirname "$0")
 
-. "$SCRIPT_DIR/env.conf"
+. "$SCRIPT_DIR/../env.conf"
 
-restic "$@"
+restic init
