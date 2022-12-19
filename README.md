@@ -145,3 +145,13 @@ To read the log for a systemd unit:
 To check the state of the restic repo:
 
     pop/script/restic snapshots
+
+## Troubleshooting
+
+If a restic command ever fails with an exception like:
+
+> unable to create lock in backend: repository is already locked by PID…
+
+And you’re sure there are no restic processes running, then you can clear the orphaned lock file with:
+
+    script/restic unlock
