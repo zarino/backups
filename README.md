@@ -146,6 +146,22 @@ To check the state of the restic repo:
 
     pop/script/restic snapshots
 
+## Restoring files from backup
+
+Assuming you have suitable `env.conf` files in place, you can use both the `mbp/script/restic` and `pop/script/restic` command wrappers to access either of the remote repositories, from any device.
+
+To view snapshots:
+
+    pop/script/restic snapshots
+
+To restore an entire directory tree (or indeed, multiple directories) into place, you can use `restore`. For example, this command restores the latest version of two directories into which Cities Skylines content is saved:
+
+    pop/script/restic restore latest --target / --include '/home/zarino/.local/share/Colossal Order' --include '/home/zarino/.local/share/Paradox Interactive'
+
+To pluck a single file or directory (as a .tar) from the backup, you can use `dump`. For example, this command, run from my Mac, pulled the latest copy of my Pop_OS PC’s bash history, into a text file on my Desktop:
+
+    pop/script/restic dump latest '/home/zarino/.bash_history' > ~/Desktop/bash_history.txt
+
 ## Troubleshooting
 
 If a restic command ever fails with an exception like:
