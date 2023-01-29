@@ -1,0 +1,52 @@
+#!/bin/sh
+
+set -e -o allexport
+
+SCRIPT_DIR=$(dirname "$0")
+
+BACKUP_PID_FILE="$HOME/.restic_backup.pid"
+MAINTAIN_PID_FILE="$HOME/.restic_maintain.pid"
+
+BACKUP_TIMESTAMP_FILE="$HOME/.restic_backup_timestamp"
+MAINTAIN_TIMESTAMP_FILE="$HOME/.restic_maintain_timestamp"
+
+NOW_DATE=$(date +"%Y-%m-%d %T")
+NOW_TIMESTAMP=$(date +"%s")
+
+if [ -f "$BACKUP_TIMESTAMP_FILE" ]; then
+    NEXT_BACKUP_TIMESTAMP=$(cat "$BACKUP_TIMESTAMP_FILE")
+    NEXT_BACKUP_DATE=$(date -d "@$NEXT_BACKUP_TIMESTAMP" +"%Y-%m-%d %T")
+
+    if [ -f "$BACKUP_PID_FILE" ] && ps -p $(cat $BACKUP_PID_FILE) > /dev/null; then
+        NEXT_BACKUP_DATE="$NEXT_BACKUP_DATE (in progress)"
+    elif [ "$NOW_TIMESTAMP" -gt "$NEXT_BACKUP_TIMESTAMP" ]; then
+        NEXT_BACKUP_DATE="$NEXT_BACKUP_DATE (overdue)"
+    fi
+else
+    if [ -f "$BACKUP_PID_FILE" ] && ps -p $(cat $BACKUP_PID_FILE) > /dev/null; then
+        NEXT_BACKUP_DATE="(in progress)"
+    else
+        NEXT_BACKUP_DATE="(unknown)"
+    fi
+fi
+
+if [ -f "$MAINTAIN_TIMESTAMP_FILE" ]; then
+    NEXT_MAINTAIN_TIMESTAMP=$(cat "$MAINTAIN_TIMESTAMP_FILE")
+    NEXT_MAINTAIN_DATE=$(date -d "@$NEXT_MAINTAIN_TIMESTAMP" +"%Y-%m-%d %T")
+
+    if [ -f "$MAINTAIN_PID_FILE" ] && ps -p $(cat $MAINTAIN_PID_FILE) > /dev/null; then
+        NEXT_MAINTAIN_DATE="$NEXT_MAINTAIN_DATE (in progress)"
+    elif [ "$NOW_TIMESTAMP" -gt "$NEXT_MAINTAIN_TIMESTAMP" ]; then
+        NEXT_MAINTAIN_DATE="$NEXT_MAINTAIN_DATE (overdue)"
+    fi
+else
+    if [ -f "$MAINTAIN_PID_FILE" ] && ps -p $(cat $MAINTAIN_PID_FILE) > /dev/null; then
+        NEXT_MAINTAIN_DATE="(in progress)"
+    else
+        NEXT_MAINTAIN_DATE="(unknown)"
+    fi
+fi
+
+echo "Time now:      $NOW_DATE"
+echo "Next backup:   $NEXT_BACKUP_DATE"
+echo "Next maintain: $NEXT_MAINTAIN_DATE"
